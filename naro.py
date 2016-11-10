@@ -17,6 +17,7 @@ from gi.repository import AppIndicator3 as appindicator
 
 VERSION = '2016.10.29'
 APPINDICATOR_ID = 'naro.emppu.kr'
+config_dir = os.path.expanduser('~/.config')
 config_path = os.path.expanduser('~/.config/naro')
 print(config_path)
 
@@ -56,7 +57,6 @@ def load_menu():
 	try:
 		with open(config_path) as config_file:
 			config = json.load(config_file)
-
 			def parse_menuitem(obj):
 				if type(obj) is str:
 					if obj == '':
@@ -117,6 +117,7 @@ def create_menu():
 	menu.append(item)
 
 	item = Gtk.MenuItem('Setting')
+	open(config_path, 'a').close()  # touch
 	item.connect('activate', lambda _: subprocess.call(['xdg-open', config_path]))
 	menu.append(item)
 
@@ -141,8 +142,10 @@ TryExec=naro
 Exec=naro
 StartupNotify=false
 """
+	desktop_dir = os.path.expanduser('~/.config/autostart')
 	desktop_path = os.path.expanduser('~/.config/autostart/naro.desktop')
 
+	os.makedirs(desktop_dir, exist_ok=True)
 	with open(desktop_path, 'w') as f:
 		f.write(desktop)
 
@@ -210,6 +213,7 @@ def reset_setting():
 	}
 ]
 """
+	os.makedirs(config_dir, exist_ok=True)
 	with open(config_path, 'w') as f:
 		f.write(default)
 
